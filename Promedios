@@ -1,0 +1,110 @@
+from functools import reduce
+
+
+def process_list(list_elements):
+    """"
+    Recibe una lista de listas y devuelve una nueva, con los elementos cambiados.
+    Cada elemento de la lista de lista, será el promedio del valor antiguo y el de sus vecinos
+    """
+    #Creo una lista de lista donde iré acumulando
+    processed_list_list = []
+   
+    if len(list_elements) == 1:
+        processed_list_list = list_elements
+    else:
+        # por cada elemento de la lista...
+        for row, List_element in enumerate(list_elements):
+            processed_list = []
+            for column, element in enumerate(list_elements[row]):
+            # lo proceso
+
+                new_element = process_element(row,column,list_elements)
+                #lo añado a la lista
+                processed_list.append(new_element)
+        #devuelve la nueva lista
+            processed_list_list.append(processed_list)
+
+    return processed_list_list
+
+
+### hacer un filter para sacar valores imposibles es decir menor que cero y mayor o igual a la longitud
+def process_element(indexRow,indexColumn, list_of_elements):
+    """
+    Recibe el indice de un elemento y lista en la que está
+    calcula su promedio con sus vecinos y devuelve dicho promedio
+    """
+    transpuesta_list_of_elements = Matriz_transpuesta(list_of_elements)
+ 
+      # Obtengo el indice Columna y Fila de vecinos
+    indices_row = get_neighbours_indices_filas(indexColumn, list_of_elements[indexRow])
+    indices_Column = get_neighbours_indices_columnas(indexRow, transpuesta_list_of_elements[indexColumn])
+
+    values_row = get_neighbours_values(indices_row,list_of_elements[indexRow])
+    values_column = get_neighbours_values(indices_Column,transpuesta_list_of_elements[indexColumn])
+   
+    values = values_row + values_column
+    # calculo su promedio
+    avg = get_average(values)
+    # lo promedio con el elemento en si
+    # devuelvo el valor final
+    return(avg)
+
+
+def Matriz_transpuesta(Matriz):
+        M_trans = [[x[i] for x in Matriz] for i in range(len(Matriz[0]))]
+        return(M_trans)
+
+
+
+
+def get_neighbours_indices_filas(index, elements):
+   
+    """"
+    Devuelve la lista de los vecinoa
+    """
+    indices = []
+    indices.append(index + 1)
+    indices.append(index - 1)
+    # incluyo al propio elemento
+    indices.append(index)
+    indices = list(filter(lambda x: x>=0 and x < len(elements), indices))
+   
+    return indices
+
+def get_neighbours_indices_columnas(index, elements):
+   
+    """"
+    Devuelve la lista de los vecinoa
+    """
+    indices = []
+    indices.append(index + 1)
+    indices.append(index - 1)
+    # No incluyo al propio elemento porque ya está en el Get Filas
+    indices = list(filter(lambda x: x>=0 and x < len(elements), indices))
+   
+    return indices
+
+
+
+
+#get vecinos_indices row
+#get venicos_indices columns. Lo mismo pero transponiendo la matriz
+
+#get valores de la matriz y promediar
+
+#con un for w¿anidado ir para cada elemento para obtener el valor a completar
+#para cada elemento de la matriz concatnear luego ir el siguiente concatenar etc...
+
+
+def get_neighbours_values(indices, elements):
+    values = []
+    for index in indices:
+        values.append(elements[index])
+    return values
+
+
+def get_average(values):
+    """
+    Recibe una lista de números y devuelve su promedio
+    """
+    return reduce(lambda a, b: a+b,values,0)/len(values)
